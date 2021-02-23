@@ -1,9 +1,9 @@
-module.exports = class extends window.casthub.card.trigger {
+import { PropList, PropType } from '@casthub/types';
 
-    /**
-     * @return {Promise}
-     */
-    async mounted() {
+export default class extends window.casthub.card.trigger<{
+    scene: string;
+}> {
+    async mounted(): Promise<void> {
         const { id } = this.identity;
 
         // Open the WebSocket Connection to XSplit Broadcaster.
@@ -21,10 +21,7 @@ module.exports = class extends window.casthub.card.trigger {
         await super.mounted();
     }
 
-    /**
-     * @return {Promise}
-     */
-    async prepareProps() {
+    async prepareProps(): Promise<PropList> {
         const raw = this.ws.send('getAllScenes');
         let scenes = raw.reduce((obj, scene) => {
             obj[scene.id] = {
@@ -43,12 +40,11 @@ module.exports = class extends window.casthub.card.trigger {
 
         return {
             scene: {
-                type: 'select',
+                type: PropType.Select,
                 label: 'Scene',
                 default: '_any',
                 options: scenes,
             },
         };
     }
-
-};
+}
